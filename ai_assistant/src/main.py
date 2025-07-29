@@ -1,6 +1,8 @@
 from user_profile import UserProfile
 from learning import Learning
 from email_client import EmailClient
+from social_media import SocialMedia
+from conscience import check_consequences
 
 import random
 import os
@@ -31,6 +33,8 @@ class LanguageModel:
             return "read email"
         elif "send email" in prompt:
             return "send email"
+        elif "tweet" in prompt:
+            return f"tweet {prompt.split('tweet')[1].strip()}"
 
         # Propose an action with a 20% probability
         if random.random() < 0.2:
@@ -56,6 +60,7 @@ def main():
     llm = LanguageModel()
     learning = Learning(user_profile, llm, username)
     email_client = EmailClient(username)
+    social_media = SocialMedia()
 
     while True:
         prompt = input("> ")
@@ -78,6 +83,13 @@ def main():
             to = input("To: ")
             subject = input("Subject: ")
             body = input("Body: ")
+            warning = check_consequences("send email", {"to": to, "subject": subject, "body": body})
+            if warning:
+                print(warning)
+                approval = input("Would you like me to do that? (y/n) ")
+                if approval.lower() != "y":
+                    print("Okay, I won't do that.")
+                    continue
             email_client.send_email(to, subject, body)
         elif response == "propose_action":
             print("I have an idea. I can send you an email with a summary of your profile.")
@@ -87,6 +99,16 @@ def main():
                 email_client.send_email(user_profile.get("name"), "Your Profile Summary", profile_summary)
             else:
                 print("Okay, I won't do that.")
+        elif response.startswith("tweet"):
+            text = response.split(" ", 1)[1]
+            warning = check_consequences("tweet", {"text": text})
+            if warning:
+                print(warning)
+                approval = input("Would you like me to do that? (y/n) ")
+                if approval.lower() != "y":
+                    print("Okay, I won't do that.")
+                    continue
+            social_media.post_tweet(text)
         else:
             print(response)
 

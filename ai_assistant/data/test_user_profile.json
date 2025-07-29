@@ -1,0 +1,10 @@
+{
+    "name": "test_user",
+    "learning_style": "visual",
+    "technical_background": "beginner",
+    "interests": [
+        "python"
+    ],
+    "goals": "learn python",
+    "test_key": "test_value"
+}
