@@ -3,11 +3,26 @@ from learning import Learning
 from email_client import EmailClient
 
 import random
+import os
+
+# TODO: Install the required library for your chosen LLM provider (e.g., pip install openai)
+# import openai
+
+# TODO: Set your API key as an environment variable
+# openai.api_key = os.getenv("OPENAI_API_KEY")
+# MODEL_NAME = "gpt-3.5-turbo"
 
 class LanguageModel:
     def get_response(self, prompt):
-        # In a real application, this would be a call to an LLM API (e.g., Claude, GPT)
-        # For now, we'll just simulate a response.
+        # TODO: Replace this with a real API call to your chosen LLM provider
+        # response = openai.Completion.create(
+        #     engine=MODEL_NAME,
+        #     prompt=prompt,
+        #     max_tokens=150,
+        # )
+        # return response.choices[0].text.strip()
+
+        # For now, we'll just continue to simulate a response.
         if "learn" in prompt:
             return f"learn {prompt.split('learn')[1].strip()}"
         elif "setup profile" in prompt:
@@ -21,7 +36,7 @@ class LanguageModel:
         if random.random() < 0.2:
             return "propose_action"
 
-        return "Sorry, I don't understand that command."
+        return f"I am a large language model. I received the following prompt: '{prompt}'"
 
 def setup_profile(user_profile):
     print("Starting profile setup...")
