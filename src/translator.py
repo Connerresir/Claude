@@ -1,8 +1,8 @@
-from googletrans import Translator
+from googletrans import Translator as GoogleTranslator
 
 class Translator:
     def __init__(self):
-        self.translator = Translator()
+        self.translator = GoogleTranslator()
 
     def translate(self, text, dest_lang):
         try:
