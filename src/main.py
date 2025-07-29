@@ -10,16 +10,16 @@ from .translator import Translator
 import random
 import os
 
-# TODO: Install the required library for your chosen LLM provider (e.g., pip install openai)
-# import openai
-
 # TODO: Set your API key as an environment variable
-# openai.api_key = os.getenv("OPENAI_API_KEY")
-# MODEL_NAME = "gpt-3.5-turbo"
+# ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
+# CLAUDE_MODEL_NAME = "claude-2"
+
+import anthropic
 
 class LanguageModel:
     def __init__(self):
         self.personality = "a helpful assistant"
+        self.client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 
     def set_personality(self, personality):
         self.personality = personality
@@ -28,12 +28,14 @@ class LanguageModel:
     def get_response(self, prompt):
         # TODO: Replace this with a real API call to your chosen LLM provider
         # full_prompt = f"You are {self.personality}. {prompt}"
-        # response = openai.Completion.create(
-        #     engine=MODEL_NAME,
-        #     prompt=full_prompt,
-        #     max_tokens=150,
+        # message = self.client.messages.create(
+        #     model=CLAUDE_MODEL_NAME,
+        #     max_tokens=1024,
+        #     messages=[
+        #         {"role": "user", "content": full_prompt}
+        #     ]
         # )
-        # return response.choices[0].text.strip()
+        # return message.content
 
         # For now, we'll just continue to simulate a response.
         if "learn" in prompt:
@@ -52,6 +54,10 @@ class LanguageModel:
             return "get credential"
         elif "login" in prompt:
             return "login"
+        elif "instagram_posts" in prompt:
+            return f"instagram_posts {prompt.split('instagram_posts')[1].strip()}"
+        elif "instagram_dm" in prompt:
+            return f"instagram_dm {prompt.split('instagram_dm')[1].strip()}"
         elif "instagram" in prompt:
             return f"instagram {prompt.split('instagram')[1].strip()}"
         elif "set personality" in prompt:
@@ -136,6 +142,16 @@ def main():
                     print("Okay, I won't do that.")
                     continue
             twitter.post_tweet(text)
+        elif response.startswith("instagram_posts"):
+            username = response.split(" ", 1)[1]
+            posts = instagram.get_user_posts(username)
+            for post in posts:
+                print(post)
+        elif response.startswith("instagram_dm"):
+            parts = response.split(" ", 2)
+            username = parts[1]
+            message = parts[2]
+            instagram.send_dm(username, message)
         elif response.startswith("instagram"):
             username = response.split(" ", 1)[1]
             info = instagram.get_user_info(username)

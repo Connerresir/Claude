@@ -67,6 +67,14 @@ class TestFullSystem(unittest.TestCase):
         # This test requires a valid Instagram account
         pass
 
+    def test_instagram_posts(self):
+        # This test requires a valid Instagram account
+        pass
+
+    def test_instagram_dm(self):
+        # This test requires a valid Instagram account
+        pass
+
     def test_translator(self):
         # This test requires a network connection
         pass

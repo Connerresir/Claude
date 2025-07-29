@@ -48,3 +48,22 @@ class Instagram:
             }
         except Exception as e:
             return f"Error getting user info: {e}"
+
+    def get_user_posts(self, username):
+        try:
+            profile = instaloader.Profile.from_username(self.L.context, username)
+            posts = []
+            for post in profile.get_posts():
+                posts.append({
+                    "caption": post.caption,
+                    "likes": post.likes,
+                    "comments": post.comments,
+                    "url": f"https://www.instagram.com/p/{post.shortcode}/"
+                })
+            return posts
+        except Exception as e:
+            return f"Error getting user posts: {e}"
+
+    def send_dm(self, username, message):
+        # This is a placeholder, as sending DMs is not well-supported by the Instagram API.
+        print(f"Sending DM to {username}: {message}")

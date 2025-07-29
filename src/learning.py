@@ -3,6 +3,9 @@ from .knowledge_base import KnowledgeBase
 import requests
 from bs4 import BeautifulSoup
 from youtube_transcript_api import YouTubeTranscriptApi
+import cv2
+import pytesseract
+import os
 
 class Learning:
     def __init__(self, user_profile, llm, username):
@@ -28,6 +31,12 @@ class Learning:
                 return summary
             except Exception as e:
                 return f"Error getting video transcript: {e}"
+        elif topic.endswith((".mp4", ".avi", ".mov")):
+            content = self._get_text_from_video(topic)
+            prompt = f"Summarize the following video content for a {learning_style} learner:\n{content}"
+            summary = self.llm.get_response(prompt)
+            self.kb.add(topic, summary)
+            return summary
 
         # Perform a web search to find resources
         search_results = web_search.search(topic)
@@ -50,3 +59,17 @@ class Learning:
         self.kb.add(topic, plan)
 
         return plan
+
+    def _get_text_from_video(self, video_path):
+        if not os.path.exists(video_path):
+            return "Video not found."
+
+        cap = cv2.VideoCapture(video_path)
+        text = ""
+        while cap.isOpened():
+            ret, frame = cap.read()
+            if not ret:
+                break
+            text += pytesseract.image_to_string(frame)
+        cap.release()
+        return text
