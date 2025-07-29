@@ -4,7 +4,9 @@ import os
 class UserProfile:
     def __init__(self, username="default_user"):
         self.username = username
-        self.profile_path = os.path.join("ai_assistant", "data", f"{self.username}_profile.json")
+        self.data_dir = "data"
+        self.profile_path = os.path.join(self.data_dir, f"{self.username}_profile.json")
+        os.makedirs(self.data_dir, exist_ok=True)
         self.profile = self.load_profile()
 
     def load_profile(self):

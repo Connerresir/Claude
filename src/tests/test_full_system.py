@@ -1,9 +1,9 @@
-from main import LanguageModel, setup_profile, main
-from user_profile import UserProfile
-from learning import Learning
-from email_client import EmailClient
-from social_media import SocialMedia
-from conscience import check_consequences
+from src.main import LanguageModel, setup_profile, main
+from src.user_profile import UserProfile
+from src.learning import Learning
+from src.email_client import EmailClient
+from src.social_media import Twitter, Instagram
+from src.conscience import check_consequences
 import unittest
 from unittest.mock import patch, MagicMock
 
@@ -15,7 +15,8 @@ class TestFullSystem(unittest.TestCase):
         self.llm = LanguageModel()
         self.learning = Learning(self.user_profile, self.llm, self.username)
         self.email_client = EmailClient(self.username)
-        self.social_media = SocialMedia()
+        self.twitter = Twitter()
+        self.instagram = Instagram()
 
     def test_user_profile(self):
         self.user_profile.set("test_key", "test_value")
@@ -27,7 +28,7 @@ class TestFullSystem(unittest.TestCase):
         self.assertEqual(self.user_profile.get("name"), "test_user")
         self.assertEqual(self.user_profile.get("learning_style"), "visual")
 
-    @patch('ai_assistant.src.web_search.search')
+    @patch('src.web_search.search')
     def test_learning_module(self, mock_search):
         mock_search.return_value = [{"title": "Python for Beginners", "url": "https://example.com/python-for-beginners"}]
         plan = self.learning.create_learning_plan("python")
@@ -45,7 +46,7 @@ class TestFullSystem(unittest.TestCase):
 
     @patch('tweepy.Client')
     def test_social_media(self, mock_tweepy):
-        self.social_media.post_tweet("Hello, world!")
+        self.twitter.post_tweet("Hello, world!")
         # In a real test, you would assert that the tweet was posted correctly
 
     def test_conscience(self):
@@ -53,6 +54,22 @@ class TestFullSystem(unittest.TestCase):
         self.assertIsNotNone(warning)
         warning = check_consequences("create a new file", {})
         self.assertIsNone(warning)
+
+    def test_credentials(self):
+        # This test requires a running keychain service
+        pass
+
+    def test_login(self):
+        # This test requires a running webdriver and a website to log in to
+        pass
+
+    def test_instagram(self):
+        # This test requires a valid Instagram account
+        pass
+
+    def test_translator(self):
+        # This test requires a network connection
+        pass
 
 if __name__ == '__main__':
     unittest.main()

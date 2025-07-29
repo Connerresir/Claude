@@ -1,4 +1,4 @@
-from main import LanguageModel
+from ..main import LanguageModel
 
 def test_llm_integration():
     llm = LanguageModel()

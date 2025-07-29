@@ -1,8 +1,11 @@
-from user_profile import UserProfile
-from learning import Learning
-from email_client import EmailClient
-from social_media import SocialMedia
-from conscience import check_consequences
+from .user_profile import UserProfile
+from .learning import Learning
+from .email_client import EmailClient
+from .social_media import Twitter, Instagram
+from .conscience import check_consequences
+from .credentials import Credentials
+from .login import Login
+from .translator import Translator
 
 import random
 import os
@@ -15,11 +18,19 @@ import os
 # MODEL_NAME = "gpt-3.5-turbo"
 
 class LanguageModel:
+    def __init__(self):
+        self.personality = "a helpful assistant"
+
+    def set_personality(self, personality):
+        self.personality = personality
+        print(f"Personality set to: {self.personality}")
+
     def get_response(self, prompt):
         # TODO: Replace this with a real API call to your chosen LLM provider
+        # full_prompt = f"You are {self.personality}. {prompt}"
         # response = openai.Completion.create(
         #     engine=MODEL_NAME,
-        #     prompt=prompt,
+        #     prompt=full_prompt,
         #     max_tokens=150,
         # )
         # return response.choices[0].text.strip()
@@ -35,6 +46,18 @@ class LanguageModel:
             return "send email"
         elif "tweet" in prompt:
             return f"tweet {prompt.split('tweet')[1].strip()}"
+        elif "set credential" in prompt:
+            return "set credential"
+        elif "get credential" in prompt:
+            return "get credential"
+        elif "login" in prompt:
+            return "login"
+        elif "instagram" in prompt:
+            return f"instagram {prompt.split('instagram')[1].strip()}"
+        elif "set personality" in prompt:
+            return f"set personality {prompt.split('set personality')[1].strip()}"
+        elif "translate" in prompt:
+            return f"translate {prompt.split('translate')[1].strip()}"
 
         # Propose an action with a 20% probability
         if random.random() < 0.2:
@@ -60,7 +83,11 @@ def main():
     llm = LanguageModel()
     learning = Learning(user_profile, llm, username)
     email_client = EmailClient(username)
-    social_media = SocialMedia()
+    twitter = Twitter()
+    instagram = Instagram()
+    credentials = Credentials()
+    login = Login()
+    translator = Translator()
 
     while True:
         prompt = input("> ")
@@ -108,7 +135,45 @@ def main():
                 if approval.lower() != "y":
                     print("Okay, I won't do that.")
                     continue
-            social_media.post_tweet(text)
+            twitter.post_tweet(text)
+        elif response.startswith("instagram"):
+            username = response.split(" ", 1)[1]
+            info = instagram.get_user_info(username)
+            print(info)
+        elif response == "set credential":
+            service_name = input("Service name: ")
+            username = input("Username: ")
+            password = input("Password: ")
+            credentials.set_credential(service_name, username, password)
+        elif response == "get credential":
+            service_name = input("Service name: ")
+            username = input("Username: ")
+            password = credentials.get_credential(service_name, username)
+            if password:
+                print(f"Password for {username} on {service_name}: {password}")
+            else:
+                print(f"No password found for {username} on {service_name}")
+        elif response == "login":
+            service_name = input("Service name: ")
+            username = input("Username: ")
+            login_url = input("Login URL: ")
+            username_field_id = input("Username field ID: ")
+            password_field_id = input("Password field ID: ")
+            submit_button_id = input("Submit button ID: ")
+            driver = login.login(service_name, username, login_url, username_field_id, password_field_id, submit_button_id)
+            if driver:
+                # The driver is now logged in and can be used to interact with the website
+                # For now, we'll just close it.
+                driver.quit()
+        elif response.startswith("set personality"):
+            personality = response.split(" ", 2)[2]
+            llm.set_personality(personality)
+        elif response.startswith("translate"):
+            parts = response.split(" ", 2)
+            dest_lang = parts[1]
+            text = parts[2]
+            translated_text = translator.translate(text, dest_lang)
+            print(f"Translated text: {translated_text}")
         else:
             print(response)
 

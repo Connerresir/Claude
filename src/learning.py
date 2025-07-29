@@ -1,7 +1,8 @@
-import web_search
-from knowledge_base import KnowledgeBase
+from . import web_search
+from .knowledge_base import KnowledgeBase
 import requests
 from bs4 import BeautifulSoup
+from youtube_transcript_api import YouTubeTranscriptApi
 
 class Learning:
     def __init__(self, user_profile, llm, username):
@@ -15,6 +16,18 @@ class Learning:
             return self.kb.get(topic)
 
         learning_style = self.user_profile.get("learning_style", "visual")
+
+        if "youtube.com/watch?v=" in topic:
+            video_id = topic.split("v=")[1]
+            try:
+                transcript = YouTubeTranscriptApi.get_transcript(video_id)
+                content = " ".join([item["text"] for item in transcript])
+                prompt = f"Summarize the following video transcript for a {learning_style} learner:\n{content}"
+                summary = self.llm.get_response(prompt)
+                self.kb.add(topic, summary)
+                return summary
+            except Exception as e:
+                return f"Error getting video transcript: {e}"
 
         # Perform a web search to find resources
         search_results = web_search.search(topic)

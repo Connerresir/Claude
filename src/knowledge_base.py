@@ -4,7 +4,9 @@ import os
 class KnowledgeBase:
     def __init__(self, username="default_user"):
         self.username = username
-        self.kb_path = os.path.join("ai_assistant", "data", f"{self.username}_kb.json")
+        self.data_dir = "data"
+        self.kb_path = os.path.join(self.data_dir, f"{self.username}_kb.json")
+        os.makedirs(self.data_dir, exist_ok=True)
         self.kb = self.load_kb()
 
     def load_kb(self):
