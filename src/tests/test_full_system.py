@@ -79,5 +79,29 @@ class TestFullSystem(unittest.TestCase):
         # This test requires a network connection
         pass
 
+    def test_observer(self):
+        # This test requires a network connection
+        pass
+
+    def test_thinker(self):
+        # This test requires a running LLM
+        pass
+
+    def test_decider(self):
+        # This test requires a running LLM
+        pass
+
+    def test_actor(self):
+        # This test requires a running LLM
+        pass
+
+    def test_draf(self):
+        # This test requires a running LLM
+        pass
+
+    def test_nlu(self):
+        # This test requires a running LLM
+        pass
+
 if __name__ == '__main__':
     unittest.main()

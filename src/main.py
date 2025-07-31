@@ -6,6 +6,11 @@ from .conscience import check_consequences
 from .credentials import Credentials
 from .login import Login
 from .translator import Translator
+from .observer import Observer
+from .thinker import Thinker
+from .decider import Decider
+from .actor import Actor
+from .nlu import NLU
 
 import random
 import os
@@ -64,6 +69,18 @@ class LanguageModel:
             return f"set personality {prompt.split('set personality')[1].strip()}"
         elif "translate" in prompt:
             return f"translate {prompt.split('translate')[1].strip()}"
+        elif "observe" in prompt:
+            return "observe"
+        elif "think" in prompt:
+            return f"think {prompt.split('think')[1].strip()}"
+        elif "decide" in prompt:
+            return f"decide {prompt.split('decide')[1].strip()}"
+        elif "act" in prompt:
+            return f"act {prompt.split('act')[1].strip()}"
+        elif "draf" in prompt:
+            return "draf"
+        elif "understand" in prompt:
+            return f"understand {prompt.split('understand')[1].strip()}"
 
         # Propose an action with a 20% probability
         if random.random() < 0.2:
@@ -94,6 +111,11 @@ def main():
     credentials = Credentials()
     login = Login()
     translator = Translator()
+    observer = Observer(user_profile, llm, username)
+    thinker = Thinker(llm)
+    decider = Decider(llm, thinker)
+    actor = Actor(user_profile, llm, username)
+    nlu = NLU(llm)
 
     while True:
         prompt = input("> ")
@@ -190,6 +212,37 @@ def main():
             text = parts[2]
             translated_text = translator.translate(text, dest_lang)
             print(f"Translated text: {translated_text}")
+        elif response == "observe":
+            observer.observe()
+        elif response.startswith("think"):
+            observation = response.split(" ", 1)[1]
+            thinker.think(observation)
+        elif response.startswith("decide"):
+            goal = response.split(" ", 1)[1]
+            plan = decider.decide(goal)
+            print(f"Plan: {plan}")
+        elif response.startswith("act"):
+            plan = response.split(" ", 1)[1]
+            actor.act(plan)
+        elif response == "draf":
+            while True:
+                observation = observer.observe()
+                thinker.think(observation)
+                goal = "achieve world peace"  # Placeholder for a real goal
+                plan = decider.decide(goal)
+                print(f"Proposed plan: {plan}")
+                approval = input("Would you like me to act on this plan? (y/n) ")
+                if approval.lower() == "y":
+                    actor.act(plan)
+                else:
+                    print("Okay, I won't act on that plan.")
+
+                # For now, we'll just break out of the loop after one iteration.
+                break
+        elif response.startswith("understand"):
+            text = response.split(" ", 1)[1]
+            intent = nlu.understand(text)
+            print(f"Intent: {intent}")
         else:
             print(response)
 
