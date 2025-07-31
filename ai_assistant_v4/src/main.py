@@ -11,6 +11,7 @@ from .thinker import Thinker
 from .decider import Decider
 from .actor import Actor
 from .nlu import NLU
+from .user_understanding import UserUnderstanding
 from .language_model import LanguageModel
 
 import random
@@ -44,6 +45,7 @@ def main():
     decider = Decider(llm, thinker)
     actor = Actor(user_profile, llm, username)
     nlu = NLU(llm)
+    user_understanding = UserUnderstanding(llm)
 
     while True:
         prompt = input("> ")
@@ -154,10 +156,9 @@ def main():
             actor.act(plan)
         elif response == "draf":
             while True:
-                observation = observer.observe()
-                thinker.think(observation)
-                goal = "achieve world peace"  # Placeholder for a real goal
-                plan = decider.decide(goal)
+                observer.observe()
+                thinker.think("new observation")
+                plan = decider.decide("achieve world peace")
                 print(f"Proposed plan: {plan}")
                 approval = input("Would you like me to act on this plan? (y/n) ")
                 if approval.lower() == "y":
@@ -171,6 +172,10 @@ def main():
             text = response.split(" ", 1)[1]
             intent = nlu.understand(text)
             print(f"Intent: {intent}")
+        elif response == "analyze_me":
+            # TODO: Get the conversation history
+            conversation = ""
+            user_understanding.analyze_conversation(conversation)
         else:
             print(response)
 
