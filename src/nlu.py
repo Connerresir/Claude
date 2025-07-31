@@ -1,5 +1,5 @@
 from .translator import Translator
-from .language_model import LanguageModel
+from .models import LanguageModel
 
 class NLU:
     def __init__(self, llm):

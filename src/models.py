@@ -61,6 +61,8 @@ class LanguageModel:
             return "draf"
         elif "understand" in prompt:
             return f"understand {prompt.split('understand')[1].strip()}"
+        elif "analyze_me" in prompt:
+            return "analyze_me"
 
         # Propose an action with a 20% probability
         import random

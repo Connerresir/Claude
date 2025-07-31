@@ -2,7 +2,7 @@ import sys
 import os
 os.environ['QT_QPA_PLATFORM'] = 'offscreen'
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QTextEdit, QLineEdit, QPushButton, QLabel
-from .language_model import LanguageModel
+from .models import LanguageModel
 from .main import setup_profile
 from .user_profile import UserProfile
 from .learning import Learning
